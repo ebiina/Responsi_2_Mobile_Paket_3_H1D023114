@@ -15,7 +15,9 @@ Aplikasi Flutter untuk inventaris kategori **Buku** di supermarket. Aplikasi ini
 
 ## 🎥 Video Demo Aplikasi
 
-[Video Demo](videodemo.mp4)
+!Video Demo](videodemo.mp4)
+![Video Demo](videodemo.gif)
+
 
 **Deskripsi Video:** Video ini mendemonstrasikan seluruh fitur utama aplikasi, termasuk:
 1.  Pendaftaran pengguna baru.
@@ -53,13 +55,13 @@ Data buku disimpan dalam sebuah koleksi bernama `books`.
 
 | Field | Tipe Data | Contoh |
 | :--- | :--- | :--- |
-| `judul` | String | "Laskar Pelangi" |
-| `harga` | Integer | 99000 |
-| `jumlah` | Integer | 50 |
-| `tanggal_masuk` | String | "2023-10-27" |
-| `volume` | Integer | 500 |
-| `penulis` | String | "Andrea Hirata" |
-| `penerbit` | String | "Bentang Pustaka" |
+| `judul` | String | "Cantik Itu Luka"
+| `harga` | Integer | 125000 |
+| `jumlah` | Integer | 31
+| `tanggal_masuk` | String | "2025-12-05" |
+| `volume` | Integer | 508 
+| `penulis` | String | "Eka Kurniawan" |
+| `penerbit` | String | "AKY Press" |
 
 ---
 
