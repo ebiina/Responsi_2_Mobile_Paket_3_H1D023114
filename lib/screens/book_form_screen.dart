@@ -4,7 +4,7 @@ import '../models/book.dart';
 import '../services/book_service.dart';
 
 class BookFormScreen extends StatefulWidget {
-  final Book? book; // Jika tidak null, ini mode edit
+  final Book? book;
 
   const BookFormScreen({super.key, this.book});
 
@@ -28,7 +28,6 @@ class _BookFormScreenState extends State<BookFormScreen> {
   @override
   void initState() {
     super.initState();
-    // Jika ada data buku, isi form dengan data tersebut (mode edit)
     if (widget.book != null) {
       _judulController.text = widget.book!.judul;
       _hargaController.text = widget.book!.harga.toString();
@@ -55,6 +54,7 @@ class _BookFormScreenState extends State<BookFormScreen> {
   Future<void> _saveBook() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
+
       final newBook = Book(
         judul: _judulController.text,
         harga: int.parse(_hargaController.text),
@@ -66,16 +66,52 @@ class _BookFormScreenState extends State<BookFormScreen> {
       );
 
       if (widget.book == null) {
-        // Mode Tambah
         await _bookService.addBook(newBook);
       } else {
-        // Mode Update
         await _bookService.updateBook(widget.book!.id!, newBook);
       }
 
       setState(() => _isLoading = false);
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
     }
+  }
+
+  Widget _sectionCard({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Card(
+      elevation: 1,
+      color: const Color(0xFFF5E8D5), // coklat muda elegan
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF5D4037),
+                  ),
+            ),
+            const SizedBox(height: 16),
+            ...children
+          ],
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _inputStyle(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Color(0xFF6D4C41)),
+      focusedBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xFF6D4C41)),
+      ),
+      border: const OutlineInputBorder(),
+    );
   }
 
   @override
@@ -83,95 +119,135 @@ class _BookFormScreenState extends State<BookFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.book == null ? 'Tambah Buku' : 'Edit Buku'),
+        backgroundColor: const Color(0xFF6D4C41), // coklat gelap elegan
+        foregroundColor: Colors.white,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _judulController,
-                  decoration: const InputDecoration(labelText: 'Judul Buku'),
-                  validator: (value) => value!.isEmpty ? 'Judul tidak boleh kosong' : null,
-                ),
-                TextFormField(
-                  controller: _penulisController,
-                  decoration: const InputDecoration(labelText: 'Penulis'),
-                  validator: (value) => value!.isEmpty ? 'Penulis tidak boleh kosong' : null,
-                ),
-                TextFormField(
-                  controller: _penerbitController,
-                  decoration: const InputDecoration(labelText: 'Penerbit'),
-                  validator: (value) => value!.isEmpty ? 'Penerbit tidak boleh kosong' : null,
-                ),
-                TextFormField(
-                  controller: _hargaController,
-                  decoration: const InputDecoration(labelText: 'Harga'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) return 'Harga tidak boleh kosong';
-                    if (int.tryParse(value) == null) return 'Masukkan angka yang valid';
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _jumlahController,
-                  decoration: const InputDecoration(labelText: 'Jumlah Stok'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) return 'Jumlah tidak boleh kosong';
-                    if (int.tryParse(value) == null) return 'Masukkan angka yang valid';
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _volumeController,
-                  decoration: const InputDecoration(labelText: 'Volume (Halaman)'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) return 'Volume tidak boleh kosong';
-                    if (int.tryParse(value) == null) return 'Masukkan angka yang valid';
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _tanggalController,
-                  decoration: InputDecoration(
-                    labelText: 'Tanggal Masuk (YYYY-MM-DD)',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (pickedDate != null) {
-                          String formattedDate =
-                              "${pickedDate.year.toString().padLeft(4, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                          _tanggalController.text = formattedDate;
-                        }
-                      },
-                    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _sectionCard(
+                title: "Informasi Utama",
+                children: [
+                  TextFormField(
+                    controller: _judulController,
+                    decoration: _inputStyle('Judul Buku'),
+                    validator: (value) =>
+                        value!.isEmpty ? 'Judul tidak boleh kosong' : null,
                   ),
-                  validator: (value) {
-                    if (value!.isEmpty) return 'Tanggal tidak boleh kosong';
-                    // Validasi format YYYY-MM-DD bisa ditambahkan di sini
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                _isLoading
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: _saveBook,
-                        child: Text(widget.book == null ? 'Simpan' : 'Perbarui'),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _penulisController,
+                    decoration: _inputStyle('Penulis'),
+                    validator: (value) =>
+                        value!.isEmpty ? 'Penulis tidak boleh kosong' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _penerbitController,
+                    decoration: _inputStyle('Penerbit'),
+                    validator: (value) =>
+                        value!.isEmpty ? 'Penerbit tidak boleh kosong' : null,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              _sectionCard(
+                title: "Detail Stok & Harga",
+                children: [
+                  TextFormField(
+                    controller: _hargaController,
+                    decoration: _inputStyle('Harga'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Harga tidak boleh kosong';
+                      if (int.tryParse(value) == null) {
+                        return 'Masukkan angka yang valid';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _jumlahController,
+                    decoration: _inputStyle('Jumlah Stok'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Jumlah tidak boleh kosong';
+                      if (int.tryParse(value) == null) {
+                        return 'Masukkan angka yang valid';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _volumeController,
+                    decoration: _inputStyle('Volume (Halaman)'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Volume tidak boleh kosong';
+                      if (int.tryParse(value) == null) {
+                        return 'Masukkan angka yang valid';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              _sectionCard(
+                title: "Informasi Tambahan",
+                children: [
+                  TextFormField(
+                    controller: _tanggalController,
+                    decoration: _inputStyle('Tanggal Masuk (YYYY-MM-DD)').copyWith(
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today,
+                            color: Color(0xFF6D4C41)),
+                        onPressed: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (pickedDate != null) {
+                            String formatted =
+                                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                            _tanggalController.text = formatted;
+                          }
+                        },
                       ),
-              ],
-            ),
+                    ),
+                    validator: (value) =>
+                        value!.isEmpty ? 'Tanggal tidak boleh kosong' : null,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton.icon(
+                      onPressed: _saveBook,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6D4C41),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      icon: const Icon(Icons.save),
+                      label: Text(widget.book == null ? 'Simpan' : 'Perbarui'),
+                    ),
+            ],
           ),
         ),
       ),

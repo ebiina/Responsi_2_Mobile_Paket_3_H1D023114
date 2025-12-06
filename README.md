@@ -15,9 +15,7 @@ Aplikasi Flutter untuk inventaris kategori **Buku** di supermarket. Aplikasi ini
 
 ## 🎥 Video Demo Aplikasi
 
-*Link Video Demo Aplikasi*
-
-*(Ganti dengan link video Anda yang menunjukkan alur lengkap aplikasi, dari login, registrasi, hingga operasi CRUD buku.)*
+[(videodemo.mp4)](videodemo.mp4)
 
 **Deskripsi Video:** Video ini mendemonstrasikan seluruh fitur utama aplikasi, termasuk:
 1.  Pendaftaran pengguna baru.
