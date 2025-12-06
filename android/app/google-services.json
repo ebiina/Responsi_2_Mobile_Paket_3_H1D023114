@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "145968609390",
+    "project_id": "responsi2-inventaris-buku",
+    "storage_bucket": "responsi2-inventaris-buku.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145968609390:android:f42cd86b7488b801f90e7f",
+        "android_client_info": {
+          "package_name": "com.example.responsi2_mobile_paket3_h1d023114"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBss2JOMoyhr0Zzoct5ErXuze6-bXOMlJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
